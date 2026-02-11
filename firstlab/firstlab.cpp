@@ -4,24 +4,27 @@
 using namespace std;
 int main(){
     setlocale(LC_ALL, "RU");
-    short MAX, a = 0, b = 1;
+    short sum=1, MAX, a = 0, b = 1;
     cout << "Введите n-ый член:";
     cin >> MAX;
-    if (MAX == 0) {
-        cout << a << endl;
-        return 0;
-    }
     if (MAX == 1) {
-        cout << b << endl;
+        cout <<"Число: "<< a << endl;
+        cout << "Сумма: " << a << endl;
         return 0;
     }
-    for (short i=2; i<=MAX; i++) {
+    if (MAX == 2) {
+        cout << "Число: " << b << endl;
+        cout << "Cумма: " << b << endl;
+        return 0;
+    }
+    for (short i = 3; i <= MAX; i++) {
+        sum += a + b;
         short next = a + b;
         a = b;
         b = next;
     }
-    cout << b << endl;
+    cout <<"Число: "<< b << endl;
+    cout<<"Сумма: "<< sum << endl;
+ 
     return 0;
-        
-    
 }
