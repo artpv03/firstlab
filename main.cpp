@@ -1,5 +1,4 @@
 #include <iostream>
-#include <cmath>
 using namespace std;
 int firstarr(){
     int statmas[10];
@@ -58,13 +57,13 @@ int sort(){
         arr1[i] = arr1[i-1] + rand()%5 + 1;
         cout<<"Элемент 1-го массива: "<<arr1[i]<<endl;
     }
-    cout<<"----------------------------"<<endl;
+    cout<<"---------------------------------------"<<endl;
     arr2[0]=rand()%10;
     for(int i=0; i<len2; i++){
         arr2[i] = arr2[i-1] + rand()%5 + 1;
         cout<<"Элемент 2-го массива: "<<arr2[i]<<endl;
     }
-    cout<<"----------------------------"<<endl;
+    cout<<"---------------------------------------"<<endl;
     int *mergeresult = new int[len1+len2];
     int lind=0;
     int rind=0;
@@ -90,17 +89,62 @@ int sort(){
     delete[] mergeresult;
     return 0;
 }
+struct Node{
+    int data;
+    Node *next;
+    Node *prev;
+};
+int list(){
+    Node* head = nullptr;
+    Node* tail = nullptr;
 
+    // Создание списка из 10 элементов
+    for (int i = 1; i <= 10; i++) {
+        Node* newNode = new Node;
+        newNode->data = i;
+        newNode->next = nullptr;
+        newNode->prev = tail;
+
+        if (head == nullptr) {
+            head = newNode;
+        } else {
+            tail->next = newNode;
+        }
+
+        tail = newNode;
+    }
+    cout << "Список вперед:\n";
+    Node* temp = head;
+    while (temp != nullptr) {
+        cout << temp->data << " ";
+        temp = temp->next;
+    }
+    cout << "\nСписок назад:\n";
+    temp = tail;
+    while (temp != nullptr) {
+        cout << temp->data << " ";
+        temp = temp->prev;
+    }
+    temp = head;
+    while (temp != nullptr) {
+        Node* nextNode = temp->next;
+        delete temp;
+        temp = nextNode;
+    }
+
+    return 0;
+}
 int main() {
     setlocale(LC_ALL, "RU");
     short nom;
-    cout << "Выберите задание(1-5):";
+    cout << "Выберите задание(1-6):";
     cin >> nom;
     if (nom == 1) firstarr();
     else if (nom == 2) secondarr();
     else if (nom == 3) thirdarr();
     else if (nom == 4) fourtharr();
     else if (nom == 5) sort();
+    else if (nom == 6) list();
     else cout<<"Неверный выбор!";
     return 0;
 }
