@@ -23,7 +23,7 @@ void thirdarr(){
     int *ptr=arr;
     for(int i=0; i<len; i++){
         *(ptr+i)=i*i;
-        cout<<"Элементы динамического массива (индекс) "<< i << ": "<< *(ptr+i) << endl;
+        cout<<"Элементы динамического массива (указатель) "<< i << ": "<< *(ptr+i) << endl;
     }
     delete[] arr;
 }
@@ -32,7 +32,7 @@ void fourtharr(){
     int *arr = new int[len];
     for(int i=0; i<len; i++){
         arr[i]=i*i;
-        cout<<"Элементы динамического массива (указатель) "<< i << ": "<< arr[i] << endl;
+        cout<<"Элементы динамического массива (индекс) "<< i << ": "<< arr[i] << endl;
     }
     delete[] arr;
 }
@@ -52,17 +52,17 @@ int sort(){
     int *arr1 = new int[len1];
     int *arr2 = new int[len2];
     srand(time(0));
-    arr1[0]=rand()%10;
-    for(int i=0; i<len1; i++){
-        arr1[i] = arr1[i-1] + rand()%5 + 1;
-        cout<<"Элемент 1-го массива: "<<arr1[i]<<endl;
-    }
+    arr1[0] = rand() % 10;
+for(int i = 1; i < len1; i++){
+    *(arr1 + i) = *(arr1 + i - 1) + rand() % 5 + 1;
+    cout << "Элемент 1-го массива: " << *(arr1 + i) << endl;
+}
     cout<<"---------------------------------------"<<endl;
-    arr2[0]=rand()%10;
-    for(int i=0; i<len2; i++){
-        arr2[i] = arr2[i-1] + rand()%5 + 1;
-        cout<<"Элемент 2-го массива: "<<arr2[i]<<endl;
-    }
+    arr2[0] = rand() % 10;
+for(int i = 1; i < len2; i++){
+    *(arr2 + i) = *(arr2 + i - 1) + rand() % 5 + 1;
+    cout << "Элемент 2-го массива: " << *(arr2 + i) << endl;
+}
     cout<<"---------------------------------------"<<endl;
     int *mergeresult = new int[len1+len2];
     int lind=0;
