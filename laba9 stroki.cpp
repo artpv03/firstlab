@@ -4,7 +4,7 @@
 using namespace std;
 int strings(){
     cout<<"Массивы строк"<<endl;
-    char str1[20]={'P','r','i','v','e','t','!','\0'};
+    char str1[20]={'P','r','i','v','e','t','!'};
     char str2[]="Kak dela?";
     cout<<str1<<endl;
     cout<<str2<<endl;
