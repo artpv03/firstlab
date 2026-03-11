@@ -3,6 +3,7 @@
 #include <cstring>
 using namespace std;
 int main() {
+    setlocale(LC_ALL, "RU");
 
     FILE *in = fopen("input.txt", "r");
     if (!in) {
@@ -83,6 +84,6 @@ int main() {
 
     fclose(out1);
     fclose(out2);
-
+    cout<<"Программа завершена, результаты записаны в файлы longest.txt и important.txt"<<endl;
     return 0;
 }
