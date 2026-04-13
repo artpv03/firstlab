@@ -2,6 +2,8 @@
 #include <fstream>
 #include <iomanip>
 #include <cmath>
+#include <cstdlib>
+
 using namespace std;
 
 const double eps = 1e-9;
@@ -17,27 +19,28 @@ void printMatrix(double** matrix, int rows, int cols, ostream& out) {
 }
 
 /*
-Элементарные преобразования матриц, используемые в методе Гаусса-Жордана:
+Метод Гаусса-Жордана:
 1. Перестановка строк
 2. Перестановка столбцов
-3. Деление строки на ненулевой ведущий элемент
-4. Вычитание из одной строки другой строки, умноженной на число
+3. Деление строки на ведущий элемент
+4. Вычитание из остальных строк ведущей строки
 */
 void metod_Gaussa_Jordana(double** matrix, int M, int N, int& r, int* L) {
     int i, j, k, v, u, p;
     double z, c;
 
-    /* задание индексного массива L */
-    for (i = 0; i < N; i++) L[i] = i;
+    for (i = 0; i < N; i++) {
+        L[i] = i;
+    }
 
     i = 0;
-    if (N < M) r = N;
-    else r = M;
+    r = (N < M) ? N : M;
 
     while (i < r) {
-        /* выбор ведущего элемента A[v][u] */
         v = i;
         u = i;
+
+        // Поиск ведущего элемента
         for (j = i; j < M; j++) {
             for (k = i; k < N; k++) {
                 if (fabs(matrix[j][k]) > fabs(matrix[v][u])) {
@@ -49,46 +52,47 @@ void metod_Gaussa_Jordana(double** matrix, int M, int N, int& r, int* L) {
 
         if (fabs(matrix[v][u]) < eps) {
             r = i;
-        } else {
-            /* перестановка строк */
-            if (v != i) {
-                for (j = i; j <= N; j++) {
-                    z = matrix[i][j];
-                    matrix[i][j] = matrix[v][j];
-                    matrix[v][j] = z;
-                }
-            }
-
-            /* перестановка столбцов */
-            if (u != i) {
-                for (k = 0; k < M; k++) {
-                    z = matrix[k][i];
-                    matrix[k][i] = matrix[k][u];
-                    matrix[k][u] = z;
-                }
-                p = L[i];
-                L[i] = L[u];
-                L[u] = p;
-            }
-
-            /* деление i-й строки на A[i][i] */
-            c = matrix[i][i];
-            for (j = i; j <= N; j++) {
-                matrix[i][j] /= c;
-            }
-
-            /* вычитание уравнений */
-            for (k = 0; k < M; k++) {
-                if (k != i) {
-                    c = matrix[k][i];
-                    for (j = i; j <= N; j++) {
-                        matrix[k][j] -= c * matrix[i][j];
-                    }
-                }
-            }
-
-            i++;
+            break;
         }
+
+        // Перестановка строк
+        if (v != i) {
+            for (j = 0; j <= N; j++) {
+                z = matrix[i][j];
+                matrix[i][j] = matrix[v][j];
+                matrix[v][j] = z;
+            }
+        }
+
+        // Перестановка столбцов
+        if (u != i) {
+            for (k = 0; k < M; k++) {
+                z = matrix[k][i];
+                matrix[k][i] = matrix[k][u];
+                matrix[k][u] = z;
+            }
+            p = L[i];
+            L[i] = L[u];
+            L[u] = p;
+        }
+
+        // Деление строки на ведущий элемент
+        c = matrix[i][i];
+        for (j = i; j <= N; j++) {
+            matrix[i][j] /= c;
+        }
+
+        // Обнуление остальных элементов столбца
+        for (k = 0; k < M; k++) {
+            if (k != i) {
+                c = matrix[k][i];
+                for (j = i; j <= N; j++) {
+                    matrix[k][j] -= c * matrix[i][j];
+                }
+            }
+        }
+
+        i++;
     }
 }
 
@@ -101,11 +105,22 @@ int main() {
         return 1;
     }
 
-    int M, N;
-    inFile >> M >> N;
+    // Задача А: пересечение двух прямых
+    // a1*x + b1*y = c1
+    // a2*x + b2*y = c2
+    const int M = 2;
+    const int N = 2;
 
-    if (M <= 0 || N <= 0) {
-        cout << "Некорректные размеры системы" << endl;
+    double a1, b1, c1;
+    double a2, b2, c2;
+
+    if (!(inFile >> a1 >> b1 >> c1)) {
+        cout << "Ошибка чтения первой прямой из input.txt" << endl;
+        return 1;
+    }
+
+    if (!(inFile >> a2 >> b2 >> c2)) {
+        cout << "Ошибка чтения второй прямой из input.txt" << endl;
         return 1;
     }
 
@@ -114,17 +129,30 @@ int main() {
         matrix[i] = new double[N + 1];
     }
 
-    for (int i = 0; i < M; i++) {
-        for (int j = 0; j <= N; j++) {
-            inFile >> matrix[i][j];
-        }
-    }
+    // Заполняем расширенную матрицу
+    matrix[0][0] = a1;
+    matrix[0][1] = b1;
+    matrix[0][2] = c1;
+
+    matrix[1][0] = a2;
+    matrix[1][1] = b2;
+    matrix[1][2] = c2;
 
     int* L = new int[N];
     double* X = new double[N];
     int r;
 
-    outFile << "Исходная система:" << endl;
+    outFile << "Задача: найти точку пересечения двух прямых на плоскости" << endl;
+    outFile << "Уравнения прямых заданы в виде:" << endl;
+    outFile << "a1*x + b1*y = c1" << endl;
+    outFile << "a2*x + b2*y = c2" << endl << endl;
+
+    outFile << "Первая прямая: "
+            << a1 << "*x + " << b1 << "*y = " << c1 << endl;
+    outFile << "Вторая прямая: "
+            << a2 << "*x + " << b2 << "*y = " << c2 << endl << endl;
+
+    outFile << "Исходная расширенная матрица системы:" << endl;
     printMatrix(matrix, M, N + 1, outFile);
 
     metod_Gaussa_Jordana(matrix, M, N, r, L);
@@ -132,56 +160,49 @@ int main() {
     outFile << "Матрица после преобразований:" << endl;
     printMatrix(matrix, M, N + 1, outFile);
 
-    /* проверка решения системы уравнений */
     int i = r;
-    while (i < M && fabs(matrix[i][N]) < eps) i++;
+    while (i < M && fabs(matrix[i][N]) < eps) {
+        i++;
+    }
 
     if (i < M) {
-        outFile << "Система не имеет решений." << endl;
+        outFile << "Система несовместна." << endl;
+        outFile << "Следовательно, прямые параллельны и не имеют точки пересечения." << endl;
     }
     else if (r == N) {
-        outFile << "Система имеет единственное решение:" << endl;
         for (int j = 0; j < N; j++) {
             X[L[j]] = matrix[j][N];
         }
+
         for (int j = 0; j < N; j++) {
-            outFile << "x" << j + 1 << " = " << X[j] << endl;
+            if (fabs(X[j]) < eps) {
+                X[j] = 0.0;
+            }
+        }
+
+        outFile << "Система имеет единственное решение." << endl;
+        outFile << "Точка пересечения прямых:" << endl;
+        outFile << "x = " << fixed << setprecision(6) << X[0] << endl;
+        outFile << "y = " << fixed << setprecision(6) << X[1] << endl;
+
+        // Запись данных для Lazarus-программы
+        ofstream graphFile("graph.txt");
+        if (graphFile) {
+            graphFile << a1 << " " << b1 << " " << c1 << endl;
+            graphFile << a2 << " " << b2 << " " << c2 << endl;
+            graphFile << X[0] << " " << X[1] << endl;
+            graphFile.close();
+
+            outFile << endl;
+            outFile << "Данные для графической иллюстрации записаны в файл graph.txt" << endl;
+        } else {
+            outFile << endl;
+            outFile << "Не удалось создать файл graph.txt" << endl;
         }
     }
     else {
-        outFile << "Система имеет бесконечно много решений (общее решение)." << endl;
-
-        /* задание значений независимым переменным */
-        for (int k = r; k < N; k++) {
-            X[L[k]] = 0.0;
-        }
-
-        /* вычисление зависимых переменных */
-        for (int j = 0; j < r; j++) {
-            X[L[j]] = matrix[j][N];
-            for (int k = r; k < N; k++) {
-                X[L[j]] -= matrix[j][k] * X[L[k]];
-            }
-        }
-
-        outFile << "Свободные переменные:" << endl;
-        for (int k = r; k < N; k++) {
-            outFile << "x" << L[k] + 1 << " - свободная переменная" << endl;
-        }
-
-        outFile << endl << "Общее решение:" << endl;
-        for (int j = 0; j < r; j++) {
-            outFile << "x" << L[j] + 1 << " = " << matrix[j][N];
-            for (int k = r; k < N; k++) {
-                if (fabs(matrix[j][k]) > eps) {
-                    if (matrix[j][k] > 0)
-                        outFile << " - " << matrix[j][k] << "*x" << L[k] + 1;
-                    else
-                        outFile << " + " << fabs(matrix[j][k]) << "*x" << L[k] + 1;
-                }
-            }
-            outFile << endl;
-        }
+        outFile << "Система имеет бесконечно много решений." << endl;
+        outFile << "Следовательно, прямые совпадают." << endl;
     }
 
     for (int i = 0; i < M; i++) {
@@ -195,5 +216,9 @@ int main() {
     outFile.close();
 
     cout << "Проверьте файл output.txt" << endl;
+
+    // Запускаем программу рисования
+    system("risunok.exe");
+
     return 0;
 }
